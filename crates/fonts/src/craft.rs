@@ -85,6 +85,7 @@ pub fn ui_thai_fonts() -> Vec<&'static CraftFont> {
     let mut fonts: Vec<&'static CraftFont> = CRAFT_FONTS.iter().filter(|f| f.covers("Thai")).collect();
     if fonts.is_empty() {
         fonts.push(&EMBEDDED_THAI_REGULAR);
+        fonts.push(&EMBEDDED_THAI_BOLD);
     }
     fonts
 }
@@ -94,7 +95,7 @@ pub fn document_thai_font() -> Option<&'static CraftFont> {
 }
 
 pub fn document_thai_font_weighted(bold: bool) -> Option<&'static CraftFont> {
-    let mut fonts: Vec<&'static CraftFont> = CRAFT_FONTS.iter().filter(|f| f.covers("Thai")).collect();
+    let fonts: Vec<&'static CraftFont> = CRAFT_FONTS.iter().filter(|f| f.covers("Thai")).collect();
     if fonts.is_empty() {
         if bold { Some(&EMBEDDED_THAI_BOLD) } else { Some(&EMBEDDED_THAI_REGULAR) }
     } else {

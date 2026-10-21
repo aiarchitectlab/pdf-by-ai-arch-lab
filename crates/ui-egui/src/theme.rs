@@ -257,7 +257,12 @@ pub fn installed_font_definitions(cjk: CjkPreference) -> FontDefinitions {
             (SYSTEM_TAMIL_FALLBACK, crate::system_fonts::tamil_fallback()),
             (SYSTEM_THAI_FALLBACK, crate::system_fonts::thai_fallback()),
         ] {
-            let Some(data) = data else { continue };
+            let Some(mut data) = data else { continue };
+            if name == SYSTEM_THAI_FALLBACK {
+                let mut d = (*data).clone();
+                d.tweak.scale = 1.38;
+                data = Arc::new(d);
+            }
             fonts.font_data.insert(name.to_owned(), data);
             for stack in fonts.families.values_mut() {
                 stack.push(name.to_owned());
@@ -356,11 +361,14 @@ fn font_definitions_for_platform(prefer_hans: bool, platform: FontPolicyPlatform
     let mut fonts = FontDefinitions::default();
     let add = |fonts: &mut FontDefinitions, name: &str, bytes: &'static [u8]| {
         let data = FontData::from_static(bytes);
-        let data = if ["Inter", "Inter-Medium", "Inter-SemiBold", "JetBrainsMono"].contains(&name) {
+        let mut data = if ["Inter", "Inter-Medium", "Inter-SemiBold", "JetBrainsMono"].contains(&name) {
             data.tweak(primary_font_tweak(platform, name))
         } else {
             on_interface_baseline(data)
         };
+        if name.contains("Sarabun") || name.contains("Thai") {
+            data.tweak.scale = 1.38;
+        }
         fonts.font_data.insert(name.to_owned(), Arc::new(data));
     };
     // Shared with typed signatures' fallback glyphs, so the font is embedded once.
